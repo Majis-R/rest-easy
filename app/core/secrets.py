@@ -1,8 +1,9 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Secrets(BaseSettings):
-    secret_key: str
-    set_password: str
+    SECRET_KEY: str
+    COMMON_PASSWORD: str
+    DATABASE_URL: str
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
