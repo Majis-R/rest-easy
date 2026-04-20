@@ -1,3 +1,4 @@
+# This file exposes a dependency that can be used to protect routes with JWT authentication. 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from .services import verify_token
