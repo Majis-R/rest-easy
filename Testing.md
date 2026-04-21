@@ -1,0 +1,1 @@
+- Can DB be queryed directly?

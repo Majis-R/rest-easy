@@ -89,6 +89,7 @@ Create a RESTful API template/framwork-like-thing that can be easily modified to
 	4. dynamic application security testing **(OWASP ZAP)**
 	5. Python static code security analysis **(Bandit)**
 	6. dependency vulnerability checking **(pip-audit)**
+    7. local certificate authority tool **(mkcert)**
 9. Logging & monitoring **(Loguru)**
 10. Version control **(Git + GitHub)**
 11. Dependency & environment management **(venv + pip)**
