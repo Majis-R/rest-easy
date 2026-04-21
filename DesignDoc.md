@@ -1,29 +1,28 @@
 # Goal:  
 Create a RESTful API template/framwork-like-thing that can be easily modified to provide a simple API service (e.g., task manager, notes storage, or user info retrieval) with strong security measures. The API should demonstrate secure coding practices, proper authentication, and mechanisms to prevent abuse.
-
 # Key Features:
 1. **Authentication & Authorization**
-    - User registration/login
-    - Passwords hashed with strong algorithms
-    - Token-based authentication
-    - Role-based access control
+    - [x] User registration/login
+    - [x] Passwords hashed with strong algorithms
+    - [x] Token-based authentication
+    - [x] Role-based access control
 2. **Input Validation & Output Encoding**
-    - Validate all incoming data
-    - Prevent injection attacks
-    - Encode responses to prevent XSS
+    - [x] Validate all incoming data
+    - [ ] Prevent injection attacks
+    - [ ] Encode responses to prevent XSS
 3. **Abuse Protection**
-    - Rate limiting per IP/user
-    - Account lockout after repeated failed login attempts
-    - Logging suspicious activity (failed logins, repeated invalid requests)
-    -  IP-based restrictions
+    - [ ] Rate limiting per IP/user
+    - [ ] Account lockout after repeated failed login attempts
+    - [ ] Logging suspicious activity (failed logins, repeated invalid requests)
+    -  [ ] IP-based restrictions
 4. **Transport Security**
-    - Force HTTPS
-    - Secure headers (CORS, Content Security Policy, HSTS)
+    - [ ] Force HTTPS
+    - [ ] Secure headers (CORS, Content Security Policy, HSTS)
 5. **Error Handling**
-    - Avoid exposing sensitive info in errors
-    - Consistent JSON error responses
+    - [ ] Avoid exposing sensitive info in errors
+    - [ ] Consistent JSON error responses
 6. **Optional Advanced Features**
-    - Refresh tokens for session management
+    - [ ] Refresh tokens for session management
 
 **Deliverables:**
 - Fully functioning, customisable API framework
@@ -100,12 +99,21 @@ Create a RESTful API template/framwork-like-thing that can be easily modified to
 13. CI/CD & DevSecOps
 	1. Some parts of the jenkins pipeline laid out during course
 
-# Architecture
-- Layered Architecture with “Plug-in Style” Resource Modules
-- Modules follow a module contract 
-- Dependency injection
+# Architectural Decisions
+- Modular Monolith Design: Chosen over true microservices to eliminate internal network latency while still maintaining strict code separation.
+- Plug-and-Play Module Registry: Implemented a standardized ModuleProtocol where independent modules attach their own routes to a central registry, keeping the main application logic clean and highly extensible.
+- Native Dependency Injection: Leveraged FastAPI's Depends system for cross-module interactions (such as passing database sessions and enforcing authentication) instead of internal HTTP calls.
+- Asynchronous Database I/O: Selected asyncpg with SQLAlchemy's async engine to fully utilize FastAPI's asynchronous event loop, allowing the API to handle high concurrent HTTP requests without blocking worker threads.
+- Containerized Orchestration: Wrapped the application and its PostgreSQL database entirely in Docker Compose, guaranteeing environment consistency across local development, testing, and future deployments.
+- Centralized Configuration Management: Decoupled configuration from the codebase by managing all environment variables, secrets, and database URIs through a strongly-typed Pydantic BaseSettings class.
 
-
+# Security Decisions
+- Secure Password Storage: Adopted Argon2 via Passlib for password hashing, which is currently the industry standard.
+- Stateless Authentication: Implemented JSON Web Tokens (JWT) using Authlib with mandatory expiration times (1 hour) to limit the attack window of stolen tokens.
+- Role-Based Access Control (RBAC): Created centralized authorization dependencies (e.g., auth and auth_admin) to strictly enforce privileges at the route level.
+- SQL Injection Prevention: Exclusively utilized an Object-Relational Mapper (SQLAlchemy) with parameterized queries, completely avoiding raw SQL strings.
+- Out-of-Band Admin Provisioning: Kept administrative account creation off the public internet by isolating it to a local CLI script (create_admin.py).
+- Secrets Management: Removed all hardcoded secrets and database URIs from source code, relocating them to .env variables parsed by Pydantic.
 
 
 
