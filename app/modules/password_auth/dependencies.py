@@ -5,7 +5,7 @@ from .services import verify_token
 
 security = HTTPBearer()
 
-def require_auth(credentials: HTTPAuthorizationCredentials = Depends(security)):
+def auth(credentials: HTTPAuthorizationCredentials = Depends(security)):
     token = credentials.credentials
     claims = verify_token(token)
     if not claims:
