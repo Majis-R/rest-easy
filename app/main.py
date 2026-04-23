@@ -5,7 +5,7 @@ from app.core.database import engine, Base
 from app.modules.hello_world import module as hello_world_module
 from app.modules.password_auth import module as password_auth_module
 from app.modules.account_auth import module as account_auth_module
-from app.modules.account_auth.models import User 
+from app.modules.chat_module import module as chat_module
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -31,6 +31,7 @@ def create_app() -> FastAPI:
     registry.add_module(hello_world_module)
     # registry.add_module(password_auth_module)
     registry.add_module(account_auth_module)
+    registry.add_module(chat_module)
 
     # Register all modules with the app
     registry.register_all(app)
