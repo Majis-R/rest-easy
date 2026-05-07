@@ -55,7 +55,7 @@ pipeline {
                 echo 'Checking and provisioning SSL certificate if needed...'
                 sh """
                 # We use --keep-until-expiring so it gracefully skips if a valid certificate is already present
-                docker compose run --rm certbot certonly \\
+                docker-compose run --rm certbot certonly \\
                   --webroot -w /var/www/certbot \\
                   --email ${SSL_EMAIL} \\
                   -d bubly.duckdns.org \\
@@ -63,7 +63,7 @@ pipeline {
                   --keep-until-expiring || true
                   
                 # Reload Nginx so it starts using the newly acquired certificate (if any)
-                docker compose exec nginx nginx -s reload || true
+                docker-compose exec nginx nginx -s reload || true
                 """
             }
         }
