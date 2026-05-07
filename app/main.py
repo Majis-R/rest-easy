@@ -1,5 +1,7 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from app.core.registry import ModuleRegistry
 from app.core.database import engine, Base
 from app.modules.hello_world import module as hello_world_module
@@ -35,6 +37,10 @@ def create_app() -> FastAPI:
 
     # Register all modules with the app
     registry.register_all(app)
+
+    @app.get("/test-ui", include_in_schema=False)
+    async def test_ui() -> FileResponse:
+        return FileResponse(Path(__file__).parent / "web" / "test_ui.html")
 
     return app
 

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rest Easy API Tester</title>
+  <style>
+    :root {
+      --bg: #f4efe6;
+      --surface: #fffaf3;
+      --ink: #231f20;
+      --muted: #6c6460;
+      --accent: #0f766e;
+      --accent-2: #0c4a6e;
+      --danger: #b42318;
+      --border: #d8cfc6;
+      --mono: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace;
+      --sans: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--sans);
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 10%, #f7d7b6 0%, transparent 35%),
+        radial-gradient(circle at 90% 15%, #cbe8dd 0%, transparent 30%),
+        linear-gradient(160deg, #f5efe5 0%, #ece6dc 100%);
+    }
+
+    .shell {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 1.25rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .hero {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 1.25rem;
+      box-shadow: 0 10px 30px rgba(30, 20, 10, 0.08);
+      animation: rise 450ms ease-out both;
+    }
+
+    .hero h1 {
+      margin: 0 0 0.25rem;
+      font-size: clamp(1.35rem, 1.6vw, 1.8rem);
+      letter-spacing: 0.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.97rem;
+    }
+
+    .token-row {
+      margin-top: 1rem;
+      display: grid;
+      gap: 0.5rem;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+    }
+
+    .token-row input {
+      width: 100%;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 1rem;
+      box-shadow: 0 8px 22px rgba(30, 20, 10, 0.06);
+      animation: rise 550ms ease-out both;
+    }
+
+    .card h2 {
+      margin: 0 0 0.9rem;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-2);
+    }
+
+    .row {
+      display: grid;
+      gap: 0.55rem;
+      margin-bottom: 0.6rem;
+    }
+
+    label {
+      font-size: 0.84rem;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    input {
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 10px;
+      padding: 0.62rem 0.72rem;
+      font-family: var(--mono);
+      font-size: 0.9rem;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 0.62rem 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color: #fff;
+      transition: transform 120ms ease, filter 120ms ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+    }
+
+    button.secondary {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--border);
+    }
+
+    button.danger {
+      background: var(--danger);
+    }
+
+    .output {
+      border: 1px solid var(--border);
+      background: #1e1e1e;
+      color: #f8f8f2;
+      border-radius: 14px;
+      padding: 0.9rem;
+      min-height: 260px;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      white-space: pre-wrap;
+      overflow: auto;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 720px) {
+      .token-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <h1>Rest Easy Endpoint Tester</h1>
+      <p>Quickly exercise account and chat APIs from one page. Login stores your bearer token automatically.</p>
+      <div class="token-row">
+        <input id="token" placeholder="Bearer token (auto-filled after login)" />
+        <button class="secondary" id="clear-token" type="button">Clear Token</button>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Account: Register</h2>
+        <div class="row">
+          <label for="reg-username">Username</label>
+          <input id="reg-username" placeholder="new_user" />
+        </div>
+        <div class="row">
+          <label for="reg-password">Password</label>
+          <input id="reg-password" type="password" placeholder="secret" />
+        </div>
+        <button id="register-btn" type="button">POST /account/register</button>
+      </article>
+
+      <article class="card">
+        <h2>Account: Login</h2>
+        <div class="row">
+          <label for="login-username">Username</label>
+          <input id="login-username" placeholder="existing_user" />
+        </div>
+        <div class="row">
+          <label for="login-password">Password</label>
+          <input id="login-password" type="password" placeholder="secret" />
+        </div>
+        <button id="login-btn" type="button">POST /account/login</button>
+      </article>
+
+      <article class="card">
+        <h2>Account: Admin Endpoints</h2>
+        <button id="list-users-btn" type="button">GET /account/users</button>
+        <div class="row" style="margin-top: 0.7rem;">
+          <label for="delete-username">Username to delete</label>
+          <input id="delete-username" placeholder="target_user" />
+        </div>
+        <button class="danger" id="delete-user-btn" type="button">DELETE /account/delete/{username}</button>
+      </article>
+
+      <article class="card">
+        <h2>Chat: Create Message</h2>
+        <div class="row">
+          <label for="chat-content">Message content</label>
+          <input id="chat-content" placeholder="Hello from tester" />
+        </div>
+        <button id="create-message-btn" type="button">POST /chat/messages</button>
+      </article>
+
+      <article class="card">
+        <h2>Chat: Read/Search</h2>
+        <div class="row">
+          <label for="chat-limit">Limit</label>
+          <input id="chat-limit" type="number" value="20" min="1" max="1000" />
+        </div>
+        <div class="row">
+          <label for="chat-offset">Offset</label>
+          <input id="chat-offset" type="number" value="0" min="0" />
+        </div>
+        <button id="get-messages-btn" type="button">GET /chat/messages</button>
+        <div class="row" style="margin-top: 0.7rem;">
+          <label for="chat-user">Username filter</label>
+          <input id="chat-user" placeholder="username" />
+        </div>
+        <button id="get-user-messages-btn" type="button">GET /chat/messages/{username}</button>
+        <div class="row" style="margin-top: 0.7rem;">
+          <label for="chat-search-word">Search word</label>
+          <input id="chat-search-word" placeholder="hello" />
+        </div>
+        <button id="search-messages-btn" type="button">GET /chat/messages/search?word=...</button>
+      </article>
+
+      <article class="card">
+        <h2>Chat: Delete Message</h2>
+        <div class="row">
+          <label for="chat-message-id">Message ID</label>
+          <input id="chat-message-id" type="number" min="1" placeholder="1" />
+        </div>
+        <button class="danger" id="delete-message-btn" type="button">DELETE /chat/messages/delete/{message_id}</button>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>Response</h2>
+      <pre class="output" id="output">Ready.</pre>
+    </section>
+  </main>
+
+  <script>
+    const output = document.getElementById("output");
+    const tokenInput = document.getElementById("token");
+
+    function withAuthHeaders(extraHeaders = {}) {
+      const headers = { ...extraHeaders };
+      const token = tokenInput.value.trim();
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      return headers;
+    }
+
+    async function callApi(method, url, { body, formData } = {}) {
+      const options = { method, headers: {} };
+
+      if (body) {
+        options.headers = withAuthHeaders({ "Content-Type": "application/json" });
+        options.body = JSON.stringify(body);
+      } else if (formData) {
+        options.headers = withAuthHeaders({ "Content-Type": "application/x-www-form-urlencoded" });
+        options.body = new URLSearchParams(formData).toString();
+      } else {
+        options.headers = withAuthHeaders();
+      }
+
+      const response = await fetch(url, options);
+      const rawText = await response.text();
+      let parsed;
+
+      try {
+        parsed = rawText ? JSON.parse(rawText) : null;
+      } catch {
+        parsed = rawText;
+      }
+
+      const payload = {
+        method,
+        url,
+        status: response.status,
+        ok: response.ok,
+        data: parsed
+      };
+
+      output.textContent = JSON.stringify(payload, null, 2);
+      return payload;
+    }
+
+    function val(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    document.getElementById("clear-token").addEventListener("click", () => {
+      tokenInput.value = "";
+      output.textContent = "Token cleared.";
+    });
+
+    document.getElementById("register-btn").addEventListener("click", async () => {
+      await callApi("POST", "/account/register", {
+        body: {
+          username: val("reg-username"),
+          password: val("reg-password")
+        }
+      });
+    });
+
+    document.getElementById("login-btn").addEventListener("click", async () => {
+      const result = await callApi("POST", "/account/login", {
+        formData: {
+          username: val("login-username"),
+          password: val("login-password")
+        }
+      });
+
+      if (result.ok && result.data && result.data.access_token) {
+        tokenInput.value = result.data.access_token;
+      }
+    });
+
+    document.getElementById("list-users-btn").addEventListener("click", async () => {
+      await callApi("GET", "/account/users");
+    });
+
+    document.getElementById("delete-user-btn").addEventListener("click", async () => {
+      const username = val("delete-username");
+      if (!username) {
+        output.textContent = "Please enter a username to delete.";
+        return;
+      }
+      await callApi("DELETE", `/account/delete/${encodeURIComponent(username)}`);
+    });
+
+    document.getElementById("create-message-btn").addEventListener("click", async () => {
+      await callApi("POST", "/chat/messages", {
+        body: {
+          content: val("chat-content")
+        }
+      });
+    });
+
+    document.getElementById("get-messages-btn").addEventListener("click", async () => {
+      const limit = val("chat-limit") || "20";
+      const offset = val("chat-offset") || "0";
+      await callApi("GET", `/chat/messages?limit=${encodeURIComponent(limit)}&offset=${encodeURIComponent(offset)}`);
+    });
+
+    document.getElementById("get-user-messages-btn").addEventListener("click", async () => {
+      const username = val("chat-user");
+      if (!username) {
+        output.textContent = "Please enter a username for filtering.";
+        return;
+      }
+      const limit = val("chat-limit") || "20";
+      const offset = val("chat-offset") || "0";
+      await callApi("GET", `/chat/messages/${encodeURIComponent(username)}?limit=${encodeURIComponent(limit)}&offset=${encodeURIComponent(offset)}`);
+    });
+
+    document.getElementById("search-messages-btn").addEventListener("click", async () => {
+      const word = val("chat-search-word");
+      if (!word) {
+        output.textContent = "Please enter a search word.";
+        return;
+      }
+      const limit = val("chat-limit") || "20";
+      const offset = val("chat-offset") || "0";
+      await callApi("GET", `/chat/messages/search?word=${encodeURIComponent(word)}&limit=${encodeURIComponent(limit)}&offset=${encodeURIComponent(offset)}`);
+    });
+
+    document.getElementById("delete-message-btn").addEventListener("click", async () => {
+      const id = val("chat-message-id");
+      if (!id) {
+        output.textContent = "Please enter a message ID to delete.";
+        return;
+      }
+      await callApi("DELETE", `/chat/messages/delete/${encodeURIComponent(id)}`);
+    });
+  </script>
+</body>
+</html>

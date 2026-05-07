@@ -16,13 +16,11 @@ Create a RESTful API template/framwork-like-thing that can be easily modified to
     - [ ] Logging suspicious activity (failed logins, repeated invalid requests)
     -  [ ] IP-based restrictions
 4. **Transport Security**
-    - [ ] Force HTTPS
+    - [x] Force HTTPS
     - [ ] Secure headers (CORS, Content Security Policy, HSTS)
 5. **Error Handling**
     - [ ] Avoid exposing sensitive info in errors
     - [ ] Consistent JSON error responses
-6. **Optional Advanced Features**
-    - [ ] Refresh tokens for session management
 
 **Deliverables:**
 - Fully functioning, customisable API framework
@@ -71,9 +69,9 @@ Create a RESTful API template/framwork-like-thing that can be easily modified to
 2. Python Web Framework  **(FastAPI)**
 3. Database **(PostgreSQL)**
 4. Authentication/password management 
-	1. Password hashing **(Argon2id with argon2-cffi)**
+	1. Password hashing **(Argon2id)**
 	2. Token management **(JWT with Authlib)**
-	3. Possible OAUth **(OAuth2 with Authlib)**
+	3. OAUth **(OAuth2 with Authlib)**
 5. Input validation **(Pydantic with FastAPI)**
 6. Security headers & middleware
 	1. HTTPS enforcement **(HTTPSRedirectMiddleware from starlette in FastAPI)**
