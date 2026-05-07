@@ -8,12 +8,11 @@ pipeline {
     }
 
     environment {
-        // You would typically map your Jenkins credentials to environment variables here
-        // DATABASE_URL = credentials('prod-db-url')
-        // SECRET_KEY = credentials('prod-secret-key')
-        // COMMON_PASSWORD = credentials('prod-common-password')
-        // CORS_ORIGINS = credentials('prod-cors-origins')
-        // ENVIRONMENT = "production"
+        DATABASE_URL = credentials('prod-db-url')
+        SECRET_KEY = credentials('prod-secret-key')
+        COMMON_PASSWORD = credentials('prod-common-password')
+        CORS_ORIGINS = credentials('prod-cors-origins')
+        ENVIRONMENT = "production"
     }
 
     stages {
