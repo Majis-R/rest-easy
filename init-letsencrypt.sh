@@ -16,11 +16,10 @@ echo
 
 echo "### Downloading recommended TLS parameters if missing ..."
 docker-compose run --rm --entrypoint "sh -c '\
-  if [ ! -e /etc/letsencrypt/options-ssl-nginx.conf ] || [ ! -e /etc/letsencrypt/ssl-dhparams.pem ]; then \
+  if [ ! -s /etc/letsencrypt/options-ssl-nginx.conf ] || [ ! -s /etc/letsencrypt/ssl-dhparams.pem ]; then \
     mkdir -p /etc/letsencrypt; \
-    curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf > /etc/letsencrypt/options-ssl-nginx.conf; \
-    curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem > /etc/letsencrypt/ssl-dhparams.pem; \
-  fi'" certbot
+    curl -L -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf -o /etc/letsencrypt/options-ssl-nginx.conf
+    curl -L -s https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem -o /etc/letsencrypt/ssl-dhparams.pem  fi'" certbot
 
 # Check if certificates exist already in the Docker volume
 cert_exists=$(docker-compose run --rm --entrypoint "sh -c 'if [ -d /etc/letsencrypt/live/${domains[0]} ]; then echo 1; else echo 0; fi'" certbot | tr -d '\r')
