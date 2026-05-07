@@ -3,7 +3,6 @@ from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from app.core.rate_limit import limiter
@@ -58,11 +57,6 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-
-    # Note: HTTPSRedirectMiddleware enforces HTTPS globally. 
-    # If the environment is dev but accessed via http, it redirects to https.
-    if secrets.ENVIRONMENT == "production":
-        app.add_middleware(HTTPSRedirectMiddleware)
 
     # Initialize registry
     registry = ModuleRegistry()
