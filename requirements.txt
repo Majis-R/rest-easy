@@ -26,3 +26,4 @@ authlib
 passlib[argon2]
 pydantic-settings
 python-multipart
+slowapi

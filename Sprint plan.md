@@ -15,8 +15,9 @@
 - CLI tooling for secure admin account bootstrapping
 - Local HTTPS/TLS using mkcert in Docker
 *Status: Completed*
-# Sprint 3 (Draft)
+# Sprint 3
 - Planned 10 hours of work
 - Implement Security Middleware (CORS, HSTS)
 - Implement Rate Limiting to prevent brute-force attacks
 - Develop the final demonstration module (e.g., Chat API) securely using the Account auth dependency.
+*Status: Completed*

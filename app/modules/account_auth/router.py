@@ -1,11 +1,12 @@
 import time
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from authlib.jose import jwt
 
 from app.core.database import get_db
 from app.core.secrets import secrets
+from app.core.rate_limit import limiter
 from .schemas import UserCreate, UserResponse, TokenResponse
 from .services import get_user_by_username, create_user, verify_password, get_all_users, delete_user
 from .dependencies import auth_admin
@@ -25,7 +26,8 @@ def create_access_token(username: str, role: str) -> str:
     return jwt.encode(header, payload, secrets.SECRET_KEY).decode('utf-8')
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
+@limiter.limit("5/minute")
+async def register(request: Request, user: UserCreate, db: AsyncSession = Depends(get_db)):
     """Register a new user."""
     existing_user = await get_user_by_username(db, user.username)
     if existing_user:
@@ -38,7 +40,9 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
     return new_user
 
 @router.post("/login", response_model=TokenResponse)
+@limiter.limit("5/minute")
 async def login(
+    request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(get_db)
 ):

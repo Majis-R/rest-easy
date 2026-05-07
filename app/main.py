@@ -1,9 +1,15 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from app.core.rate_limit import limiter
 from app.core.registry import ModuleRegistry
 from app.core.database import engine, Base
+from app.core.secrets import secrets
 from app.modules.hello_world import module as hello_world_module
 from app.modules.password_auth import module as password_auth_module
 from app.modules.account_auth import module as account_auth_module
@@ -25,6 +31,38 @@ def create_app() -> FastAPI:
         version="0.1.0",
         lifespan=lifespan
     )
+    
+    # Configure Rate Limiting
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+    # Security Headers Middleware (including HSTS)
+    @app.middleware("http")
+    async def add_security_headers(request: Request, call_next):
+        response = await call_next(request)
+        # HSTS (Strict-Transport-Security)
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
+        # Prevent MIME type sniffing
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        # Prevent clickjacking
+        response.headers["X-Frame-Options"] = "DENY"
+        # XSS Protection
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        return response
+
+    # CORS Middleware
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=secrets.CORS_ORIGINS,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    # Note: HTTPSRedirectMiddleware enforces HTTPS globally. 
+    # If the environment is dev but accessed via http, it redirects to https.
+    if secrets.ENVIRONMENT == "production":
+        app.add_middleware(HTTPSRedirectMiddleware)
 
     # Initialize registry
     registry = ModuleRegistry()
