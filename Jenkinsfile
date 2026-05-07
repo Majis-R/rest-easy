@@ -1,11 +1,11 @@
 pipeline {
     agent any
 
-    triggers {
-        // Triggers the pipeline when a push to the repository occurs
-        // (Requires GitHub webhook configured in Jenkins)
-        githubPush()
-    }
+    // triggers {
+    //     // Triggers the pipeline when a push to the repository occurs
+    //     // (Requires GitHub webhook configured in Jenkins)
+    //     githubPush()
+    // }
 
     environment {
         DATABASE_URL = credentials('prod-db-url')
