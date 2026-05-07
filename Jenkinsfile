@@ -34,7 +34,7 @@ pipeline {
 
         stage('Provision SSL Certificates & Deploy') {
             steps {
-                echo 'Executing Let\\'s Encrypt Initialization Script...'
+                echo "Executing Let's Encrypt Initialization Script..."
                 sh '''
                 chmod +x init-letsencrypt.sh
                 ./init-letsencrypt.sh
