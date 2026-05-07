@@ -23,8 +23,23 @@ docker-compose run --rm --entrypoint "sh -c \"if [ ! -s /etc/letsencrypt/options
   python -c 'import urllib.request as u; u.urlretrieve(\\\"https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem\\\", \\\"/etc/letsencrypt/ssl-dhparams.pem\\\")'; \
 fi\"" certbot
 
-# Check if certificates exist already in the Docker volume
+# Check if certificates exist already in the Docker volume and what type they are
+echo "### Checking for existing certificates..."
 cert_exists=$(docker-compose run --rm --entrypoint "sh -c 'if [ -d /etc/letsencrypt/live/${domains[0]} ]; then echo 1; else echo 0; fi'" certbot | tr -d '\r')
+
+if [ "$cert_exists" = "1" ]; then
+  echo "✓ Certificate directory found for ${domains[0]}"
+  # Check if it's a self-signed dummy cert
+  is_dummy=$(docker-compose run --rm --entrypoint "sh -c 'openssl x509 -in /etc/letsencrypt/live/${domains[0]}/fullchain.pem -noout -text 2>/dev/null | grep -i self-signed | wc -l'" certbot | tr -d '\r')
+  if [ "$is_dummy" -gt "0" ]; then
+    echo "⚠ Detected self-signed (DUMMY) certificate - will replace with real Let's Encrypt cert"
+    cert_exists="0"
+  else
+    echo "✓ Certificate appears to be a real Let's Encrypt certificate"
+  fi
+else
+  echo "✗ No certificate found - will create dummy and request real one"
+fi
 
 if [ "$cert_exists" = "0" ]; then
     echo "### Creating dummy certificate for ${domains[0]} ..."
