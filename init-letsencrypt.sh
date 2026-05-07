@@ -38,7 +38,8 @@ if [ "$cert_exists" = "0" ]; then
 fi
 
 echo "### Starting nginx ..."
-docker-compose up --force-recreate -d nginx
+docker-compose rm -f -s nginx || true
+docker-compose up -d nginx
 echo
 
 if [ "$cert_exists" = "0" ]; then
@@ -78,4 +79,8 @@ if [ "$cert_exists" = "0" ]; then
 fi
 
 echo "### Starting the rest of the application stack ..."
+# Re-apply the ContainerConfig workaround to the main stack
+docker-compose rm -f -s api || true
+docker-compose rm -f -s db || true
+docker-compose rm -f -s certbot || true
 docker-compose up -d --build
