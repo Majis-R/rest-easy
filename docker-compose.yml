@@ -9,7 +9,11 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=postgresql+asyncpg://api_user:api_password@db:5432/api_db
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://api_user:api_password@db:5432/api_db}
+      - SECRET_KEY
+      - COMMON_PASSWORD
+      - CORS_ORIGINS
+      - ENVIRONMENT
 
   db:
     image: postgres:15-alpine
