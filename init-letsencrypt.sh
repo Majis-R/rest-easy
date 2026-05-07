@@ -10,6 +10,10 @@ if ! [ -x "$(command -v docker-compose)" ]; then
     exit 1
 fi
 
+echo "### Cleaning up old containers to prevent ContainerConfig errors ..."
+docker-compose down --remove-orphans || true
+echo
+
 echo "### Downloading recommended TLS parameters if missing ..."
 docker-compose run --rm --entrypoint "sh -c '\
   if [ ! -e /etc/letsencrypt/options-ssl-nginx.conf ] || [ ! -e /etc/letsencrypt/ssl-dhparams.pem ]; then \
