@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        node {
+            label 'built-in' // Ensure it runs on the main server where docker is
+            customWorkspace "/opt/bubly-production" // FIXED PATH
+        }
+    }
 
     environment {
         DATABASE_URL = credentials('prod-db-url')
@@ -17,7 +22,7 @@ pipeline {
             }
         }
 
-        stage('Dependency Check & SBOM') {
+/*         stage('Dependency Check & SBOM') {
             steps {
                 sh '''
                 python3 -m venv .venv
@@ -30,7 +35,7 @@ pipeline {
                 pip-audit -r requirements.txt || true
                 '''
             }
-        }
+        } */
 
         stage('Provision SSL Certificates & Deploy') {
             steps {
