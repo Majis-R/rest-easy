@@ -36,7 +36,6 @@ pipeline {
                 # Generate a CycloneDX SBOM from requirements.txt
                 cyclonedx-py requirements -i requirements.txt -o sbom.json
                 
-                # Optional: Run a vulnerability scan on dependencies
                 pip-audit -r requirements.txt || echo "WARNING: Vulnerabilities found!"
                 '''
             }
@@ -45,7 +44,7 @@ pipeline {
         stage('Build Image') {
             steps {
                 echo 'Building Docker container...'
-                sh 'docker compose build --no-cache'
+                sh 'docker-compose build --no-cache'
             }
         }
 
@@ -53,7 +52,7 @@ pipeline {
             steps {
                 echo 'Deploying application...'
                 // Spin up securely using variables injected by the environment block
-                sh 'docker compose up -d'
+                sh 'docker-compose up -d'
             }
         }
     }
