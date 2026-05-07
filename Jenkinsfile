@@ -5,7 +5,6 @@ pipeline {
         DATABASE_URL = credentials('prod-db-url')
         SECRET_KEY = credentials('prod-secret-key')
         COMMON_PASSWORD = credentials('prod-common-password')
-        CORS_ORIGINS = credentials('prod-cors-origins')
         ENVIRONMENT = "production"
         SSL_EMAIL = credentials('ssl_email')
     }
