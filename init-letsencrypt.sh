@@ -20,8 +20,7 @@ echo "### Downloading recommended TLS parameters if missing ..."
 docker-compose run --rm --entrypoint "sh -c '\
   if [ ! -s /etc/letsencrypt/options-ssl-nginx.conf ] || [ ! -s /etc/letsencrypt/ssl-dhparams.pem ]; then \
     mkdir -p /etc/letsencrypt; \
-    curl -L -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf -o /etc/letsencrypt/options-ssl-nginx.conf; \
-    curl -L -s https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem -o /etc/letsencrypt/ssl-dhparams.pem; \
+    python -c "import urllib.request as u; files={'\''/etc/letsencrypt/options-ssl-nginx.conf'\'':'\''https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf'\'','\''/etc/letsencrypt/ssl-dhparams.pem'\'':'\''https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem'\''}; [open(p,'\''wb'\'').write(u.urlopen(url).read()) for p,url in files.items()]"; \
   fi'" certbot
 
 # Check if certificates exist already in the Docker volume
