@@ -7,6 +7,7 @@ pipeline {
         COMMON_PASSWORD = credentials('prod-common-password')
         CORS_ORIGINS = credentials('prod-cors-origins')
         ENVIRONMENT = "production"
+        SSL_EMAIL = credentials('ssl_email')
     }
 
     stages {
@@ -52,18 +53,18 @@ pipeline {
         stage('Provision SSL Certificates') {
             steps {
                 echo 'Checking and provisioning SSL certificate if needed...'
-                sh '''
+                sh """
                 # We use --keep-until-expiring so it gracefully skips if a valid certificate is already present
                 docker compose run --rm certbot certonly \\
                   --webroot -w /var/www/certbot \\
-                  --email yourname@example.com \\
+                  --email ${SSL_EMAIL} \\
                   -d bubly.duckdns.org \\
                   --agree-tos --no-eff-email \\
                   --keep-until-expiring || true
                   
                 # Reload Nginx so it starts using the newly acquired certificate (if any)
                 docker compose exec nginx nginx -s reload || true
-                '''
+                """
             }
         }
     }
