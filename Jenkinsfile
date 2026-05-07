@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        node {
-            label 'built-in' // Ensure it runs on the main server where docker is
-            customWorkspace "/opt/bubly-production" // FIXED PATH
-        }
-    }
+    agent any
 
     environment {
         DATABASE_URL = credentials('prod-db-url')
