@@ -6,8 +6,11 @@ class Secrets(BaseSettings):
     COMMON_PASSWORD: str
     DATABASE_URL: str
     
-    # List of CORS origins via environment variable, comma-separated ideally or JSON string
-    CORS_ORIGINS: List[str]
+    # Accept the raw environment value for CORS origins. Jenkins may inject
+    # a single-quoted JSON string (e.g. '\'["https://a","https://b"]\'')
+    # which would break strict JSON parsing at load time. We accept a string
+    # here and parse it in the application runtime where we can be more forgiving.
+    CORS_ORIGINS: str
     
     # Toggle secure behavior (like HTTPS-only cookies, HSTS) for dev/prod
     ENVIRONMENT: str

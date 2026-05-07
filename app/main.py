@@ -3,6 +3,8 @@ from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+import json
+import logging
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from app.core.rate_limit import limiter
@@ -50,13 +52,34 @@ def create_app() -> FastAPI:
         return response
 
     # CORS Middleware
+    # Ensure CORS_ORIGINS is a proper list (env may provide JSON string)
+    cors_origins = secrets.CORS_ORIGINS
+    if isinstance(cors_origins, str):
+        try:
+            cors_origins = json.loads(cors_origins)
+        except Exception:
+            cors_origins = [cors_origins]
+
+    # Log the configured origins for debugging
+    logging.getLogger("uvicorn").info(f"Configured CORS origins: {cors_origins}")
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=secrets.CORS_ORIGINS,
+        allow_origins=cors_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # Small debug middleware: log incoming Origin and whether it's allowed
+    @app.middleware("http")
+    async def cors_debug(request: Request, call_next):
+        origin = request.headers.get("origin")
+        if origin:
+            allowed = origin in cors_origins or "*" in cors_origins
+            logging.getLogger("uvicorn").info(f"CORS check - Origin: {origin}, allowed: {allowed}")
+        response = await call_next(request)
+        return response
 
     # Initialize registry
     registry = ModuleRegistry()
