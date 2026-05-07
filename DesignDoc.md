@@ -11,13 +11,13 @@ Create a RESTful API template/framwork-like-thing that can be easily modified to
     - [ ] Prevent injection attacks
     - [ ] Encode responses to prevent XSS
 3. **Abuse Protection**
-    - [ ] Rate limiting per IP/user
+    - [x] Rate limiting per IP/user
     - [ ] Account lockout after repeated failed login attempts
     - [ ] Logging suspicious activity (failed logins, repeated invalid requests)
     -  [ ] IP-based restrictions
 4. **Transport Security**
     - [x] Force HTTPS
-    - [ ] Secure headers (CORS, Content Security Policy, HSTS)
+    - [x] Secure headers (CORS, Content Security Policy, HSTS)
 5. **Error Handling**
     - [ ] Avoid exposing sensitive info in errors
     - [ ] Consistent JSON error responses
