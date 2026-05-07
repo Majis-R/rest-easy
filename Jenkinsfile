@@ -32,24 +32,6 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                sh '''
-                docker-compose down --remove-orphans || true
-                docker-compose up -d --build --force-recreate
-                '''
-            }
-        }
-
-        stage('Health Check') {
-            steps {
-                sh '''
-                sleep 10
-                curl -f http://localhost/health
-                '''
-            }
-        }
-
         stage('Provision SSL Certificates & Deploy') {
             steps {
                 echo "Executing Let's Encrypt Initialization Script..."
