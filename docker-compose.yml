@@ -7,7 +7,8 @@ services:
       - .:/app
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     depends_on:
-      - db
+      db:
+        condition: service_healthy # Wait for the DB healthcheck to pass
     environment:
       - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://api_user:api_password@db:5432/api_db}
       - SECRET_KEY
@@ -44,6 +45,12 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    # Add a healthcheck so Docker knows when Postgres is ready to accept connections
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U api_user -d api_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:
