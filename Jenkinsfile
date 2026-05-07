@@ -32,39 +32,13 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Provision SSL Certificates & Deploy') {
             steps {
+                echo 'Executing Let\\'s Encrypt Initialization Script...'
                 sh '''
-                docker-compose down --remove-orphans || true
-                docker-compose up -d --build --force-recreate
+                chmod +x init-letsencrypt.sh
+                ./init-letsencrypt.sh
                 '''
-            }
-        }
-
-        stage('Health Check') {
-            steps {
-                sh '''
-                sleep 10
-                curl -f http://localhost/health
-                '''
-            }
-        }
-
-        stage('Provision SSL Certificates') {
-            steps {
-                echo 'Checking and provisioning SSL certificate if needed...'
-                sh """
-                # We use --keep-until-expiring so it gracefully skips if a valid certificate is already present
-                docker-compose run --rm certbot certonly \\
-                  --webroot -w /var/www/certbot \\
-                  --email ${SSL_EMAIL} \\
-                  -d bubly.duckdns.org \\
-                  --agree-tos --no-eff-email \\
-                  --keep-until-expiring || true
-                  
-                # Reload Nginx so it starts using the newly acquired certificate (if any)
-                docker-compose exec nginx nginx -s reload || true
-                """
             }
         }
     }
