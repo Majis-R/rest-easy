@@ -16,7 +16,7 @@ pipeline {
             }
         }
 
-/*         stage('Dependency Check & SBOM') {
+        stage('Dependency Check & SBOM') {
             steps {
                 sh '''
                 python3 -m venv .venv
@@ -29,7 +29,7 @@ pipeline {
                 pip-audit -r requirements.txt || true
                 '''
             }
-        } */
+        }
 
         stage('Provision SSL Certificates & Deploy') {
             steps {
