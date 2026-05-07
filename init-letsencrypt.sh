@@ -17,21 +17,11 @@ docker ps -a --format "{{.Names}}" | grep bubly | xargs -r docker rm -f || true
 echo
 
 echo "### Downloading recommended TLS parameters if missing ..."
-docker-compose run --rm --entrypoint "sh -c 'if [ ! -s /etc/letsencrypt/options-ssl-nginx.conf ] || [ ! -s /etc/letsencrypt/ssl-dhparams.pem ]; then \
+docker-compose run --rm --entrypoint "sh -c \"if [ ! -s /etc/letsencrypt/options-ssl-nginx.conf ] || [ ! -s /etc/letsencrypt/ssl-dhparams.pem ]; then \
   mkdir -p /etc/letsencrypt; \
-  python - <<"PY"
-import urllib.request as u
-
-files = {
-    "/etc/letsencrypt/options-ssl-nginx.conf": "https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf",
-    "/etc/letsencrypt/ssl-dhparams.pem": "https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem",
-}
-
-for path, url in files.items():
-    with open(path, "wb") as handle:
-        handle.write(u.urlopen(url).read())
-PY
-fi'" certbot
+  python -c 'import urllib.request as u; u.urlretrieve(\\\"https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf\\\", \\\"/etc/letsencrypt/options-ssl-nginx.conf\\\")'; \
+  python -c 'import urllib.request as u; u.urlretrieve(\\\"https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem\\\", \\\"/etc/letsencrypt/ssl-dhparams.pem\\\")'; \
+fi\"" certbot
 
 # Check if certificates exist already in the Docker volume
 cert_exists=$(docker-compose run --rm --entrypoint "sh -c 'if [ -d /etc/letsencrypt/live/${domains[0]} ]; then echo 1; else echo 0; fi'" certbot | tr -d '\r')
