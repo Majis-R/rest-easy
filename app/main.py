@@ -73,6 +73,16 @@ def create_app() -> FastAPI:
     @app.get("/test-ui", include_in_schema=False)
     async def test_ui() -> FileResponse:
         return FileResponse(Path(__file__).parent / "web" / "test_ui.html")
+        
+    @app.get("/health", tags=["Health"])
+    async def health_check():
+        """Basic health check endpoint."""
+        return {"status": "healthy"}
+
+    @app.get("/", include_in_schema=False)
+    async def root():
+        """Root endpoint that redirects or returns a basic message."""
+        return {"message": "Welcome to the API. Access /docs for documentation."}
 
     return app
 
