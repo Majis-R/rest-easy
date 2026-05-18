@@ -52,6 +52,7 @@ The modules can have multiple different files. Each module can contain some or a
 - **schemas.py** Defines Pydantic request/response models used for validation and serialization at the API boundary.
 - **services.py** Holds the module business logic and database operations that are called by the routers and other modules as well.
 - **dependencies.py** Centralizes FastAPI dependency functions (auth, permissions, shared context) used by the routers. Can be imported by other modules in order to protect routes with authentication.
+
 Shared components are defined in the core folder
 
 ## Security decisions
@@ -179,6 +180,7 @@ AI was utilized in the project for:
 - Code production
 - Debugging
 - Documentation
+  
 Generally any output of the AI was carefully reviewed in places that were deemed important to security. AI was mostly a useful tool in this case. It did get hung up on many things and required a lot of manual intervention
 
 ## Learing outcomes
