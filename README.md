@@ -1,6 +1,6 @@
 Student ID:H293110
 # Rest Easy
-Rest Easy is built as a modular monolithic framework that can be easily extended into a secure API. 
+Rest Easy is built as a modular monolithic framework template that is designed to be easily modified into a desired secure API. 
 This repository contains the rest easy sourcecode that has been modified to function as the backend of a simple chat application. The front end for the chat app is under a separate repository https://github.com/Majis-R/Bubly-front-end. The backend is deployed at https://bubly.duckdns.org/ and the frontend is deployed to https://majis-r.github.io/Bubly-front-end/ The frontend and the backend are separated in order to more effectively demonstrate features such as CORS handling and API requests via HTTPS 
 
 The API endpoints and schemas of the running configuration are documented and can also be tested right at the backend service (see `/docs` and `/redoc`). This README serves as the focuses on architecture, security decisions, learning outcomes, and design alignment.
