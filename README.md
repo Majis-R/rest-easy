@@ -131,7 +131,7 @@ At the edge, Nginx terminates TLS and redirects HTTP to HTTPS in [nginx/default.
 Secrets are loaded from environment variables in [app/core/secrets.py](app/core/secrets.py). These are intended to be provided as Jenkins secrets. Admin accounts are created out-of-band via the local CLI [create_admin.py](create_admin.py) to keep privileged provisioning entirely off public endpoints.
 
 ### Automatic SBOM generation
-SBOMs are generated automatically as part of the deployment pipeline based on the requirements file used to puild the application [requirements.txt](requirements.txt)
+SBOMs are generated automatically as part of the deployment pipeline with CycloneDX based on the requirements file used to puild the application [requirements.txt](requirements.txt). The generated SBOM file [sbom.json](sbom.json) has been included in this repository in order to show the file as proof of the sbom generation working. 
 
 ## Demo deployment (CSC Pouta)
 The app is configured as a demo service on CSC Pouta. The primary deployment method is the Jenkins pipeline in [Jenkinsfile](Jenkinsfile), which provisions certificates and deploys the stack. The deployment stack includes:
