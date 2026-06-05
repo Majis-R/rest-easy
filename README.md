@@ -166,7 +166,7 @@ These are aligned with the gaps listed in [DesignDoc.md](DesignDoc.md) and the T
 - While some of the OWASP Cheat sheets were red through and considered for implemetning the program I could have been more thorrow with documenteing my reasonings. 
 - No automatic deployment was setup for when a push to the main branch happens in the remote. This was considered but had to be cut for time.
 - As described in the testing subsection testing of the application was rather limited due to time constraints. I wanted to try to try attacking the api but could not make the time to do this.
-- The current automatic script [init-letsencrypt.sh](init-letsencrypt.sh) does not recognise a dummy testing certificate and thinks it is the actual certificate, this results in having to manually delete the dummy certificate when switching to production 
+- The current automatic script [init-letsencrypt.sh](init-letsencrypt.sh) does not recognise a staging certificate for testing and thinks it is the actual certificate, this results in having to manually delete the staging certificate when switching to production 
 
 
 ## Files worth reading
