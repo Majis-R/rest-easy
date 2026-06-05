@@ -35,11 +35,11 @@ pipeline {
             steps {
                 echo "Executing Let's Encrypt Initialization Script..."
                 sh '''
-                sudo mkdir -p /opt/rest-easy
-                sudo cp -r ./* /opt/rest-easy/
-                cd /opt/rest-easy
-                sudo chmod +x init-letsencrypt.sh
-                sudo ./init-letsencrypt.sh
+                mkdir -p ~/rest-easy-deployment
+                cp -r ./* ~/rest-easy-deployment/
+                cd ~/rest-easy-deployment
+                chmod +x init-letsencrypt.sh
+                ./init-letsencrypt.sh
                 '''
             }
         }
