@@ -35,9 +35,6 @@ pipeline {
             steps {
                 echo "Executing Let's Encrypt Initialization Script..."
                 sh '''
-                mkdir -p ~/rest-easy-deployment
-                cp -r ./* ~/rest-easy-deployment/
-                cd ~/rest-easy-deployment
                 chmod +x init-letsencrypt.sh
                 ./init-letsencrypt.sh
                 '''
@@ -48,7 +45,6 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'sbom.json', fingerprint: true, allowEmptyArchive: true
-            cleanWs()
         }
     }
 }
