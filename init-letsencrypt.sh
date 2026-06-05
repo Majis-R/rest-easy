@@ -3,7 +3,7 @@
 domains=("bubly.duckdns.org")
 rsa_key_size=4096
 email="${SSL_EMAIL}"
-staging=1 # Set to 1 if you're testing your setup to avoid hitting request limits
+staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
 if ! [ -x "$(command -v docker-compose)" ]; then
     echo 'Error: docker-compose is not installed.' >&2
